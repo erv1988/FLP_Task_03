@@ -84,10 +84,10 @@ process (":0",_) = do
     system $ "sqlite3 " ++ dbName ++ " \"CREATE TABLE "++ testTable ++ " (id INTEGER PRIMARY KEY, str text);INSERT INTO test (str) VALUES ('test string');\""
     return True
 
--- посмотреть таллицу test
+-- посмотреть таблицу test
 process (":r",_) = do
     conn <- open dbName
-    r <- query_ conn "select * from test;" :: IO [(Int,String)]
+    r <- query_ conn (fromString ("select * from "++testTable++";")) :: IO [(Int,String)]
     mapM_ print r
     close conn
     return True
@@ -95,7 +95,7 @@ process (":r",_) = do
 -- вставка строки
 process (":i",str) = do
     conn <- open dbName
-    execute_ conn (fromString $ "insert into test (str) values ('" ++ str ++ "');")
+    execute_ conn (fromString $ "insert into "++testTable++" (str) values ('" ++ str ++ "');")
     close conn
     return True
 
